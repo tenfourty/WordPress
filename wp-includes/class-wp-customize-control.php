@@ -213,7 +213,7 @@ class WP_Customize_Control {
 		}
 
 		$this->manager = $manager;
-		$this->id = $id;
+		$this->id      = $id;
 		if ( empty( $this->active_callback ) ) {
 			$this->active_callback = array( $this, 'active_callback' );
 		}
@@ -230,8 +230,8 @@ class WP_Customize_Control {
 			foreach ( $this->settings as $key => $setting ) {
 				$settings[ $key ] = $this->manager->get_setting( $setting );
 			}
-		} else if ( is_string( $this->settings ) ) {
-			$this->setting = $this->manager->get_setting( $this->settings );
+		} elseif ( is_string( $this->settings ) ) {
+			$this->setting       = $this->manager->get_setting( $this->settings );
 			$settings['default'] = $this->setting;
 		}
 		$this->settings = $settings;
@@ -253,7 +253,7 @@ class WP_Customize_Control {
 	 */
 	final public function active() {
 		$control = $this;
-		$active = call_user_func( $this->active_callback, $this );
+		$active  = call_user_func( $this->active_callback, $this );
 
 		/**
 		 * Filters response of WP_Customize_Control::active().
@@ -308,13 +308,13 @@ class WP_Customize_Control {
 			$this->json['settings'][ $key ] = $setting->id;
 		}
 
-		$this->json['type'] = $this->type;
-		$this->json['priority'] = $this->priority;
-		$this->json['active'] = $this->active();
-		$this->json['section'] = $this->section;
-		$this->json['content'] = $this->get_content();
-		$this->json['label'] = $this->label;
-		$this->json['description'] = $this->description;
+		$this->json['type']           = $this->type;
+		$this->json['priority']       = $this->priority;
+		$this->json['active']         = $this->active();
+		$this->json['section']        = $this->section;
+		$this->json['content']        = $this->get_content();
+		$this->json['label']          = $this->label;
+		$this->json['description']    = $this->description;
 		$this->json['instanceNumber'] = $this->instance_number;
 
 		if ( 'dropdown-pages' === $this->type ) {
@@ -385,8 +385,9 @@ class WP_Customize_Control {
 	 * @uses WP_Customize_Control::render()
 	 */
 	final public function maybe_render() {
-		if ( ! $this->check_capabilities() )
+		if ( ! $this->check_capabilities() ) {
 			return;
+		}
 
 		/**
 		 * Fires just before the current Customizer control is rendered.
@@ -421,9 +422,9 @@ class WP_Customize_Control {
 		$id    = 'customize-control-' . str_replace( array( '[', ']' ), array( '-', '' ), $this->id );
 		$class = 'customize-control customize-control-' . $this->type;
 
-		?><li id="<?php echo esc_attr( $id ); ?>" class="<?php echo esc_attr( $class ); ?>">
-			<?php $this->render_content(); ?>
-		</li><?php
+		printf( '<li id="%s" class="%s">', esc_attr( $id ), esc_attr( $class ) );
+		$this->render_content();
+		echo '</li>';
 	}
 
 	/**
@@ -480,9 +481,9 @@ class WP_Customize_Control {
 	 * @since 3.4.0
 	 */
 	protected function render_content() {
-		$input_id = '_customize-input-' . $this->id;
-		$description_id = '_customize-description-' . $this->id;
-		$describedby_attr = ( ! empty( $this->description ) ) ? 'aria-describedby="' . esc_attr( $description_id ) . '"' : '';
+		$input_id         = '_customize-input-' . $this->id;
+		$description_id   = '_customize-description-' . $this->id;
+		$describedby_attr = ( ! empty( $this->description ) ) ? ' aria-describedby="' . esc_attr( $description_id ) . '" ' : '';
 		switch ( $this->type ) {
 			case 'checkbox':
 				?>
@@ -513,14 +514,15 @@ class WP_Customize_Control {
 					<span class="customize-control-title"><?php echo esc_html( $this->label ); ?></span>
 				<?php endif; ?>
 				<?php if ( ! empty( $this->description ) ) : ?>
-					<span id="<?php echo esc_attr( $description_id ); ?>" class="description customize-control-description"><?php echo $this->description ; ?></span>
+					<span id="<?php echo esc_attr( $description_id ); ?>" class="description customize-control-description"><?php echo $this->description; ?></span>
 				<?php endif; ?>
 
 				<?php foreach ( $this->choices as $value => $label ) : ?>
 					<span class="customize-inside-control-row">
 						<input
 							id="<?php echo esc_attr( $input_id . '-radio-' . $value ); ?>"
-							type="radio" <?php echo $describedby_attr; ?>
+							type="radio"
+							<?php echo $describedby_attr; ?>
 							value="<?php echo esc_attr( $value ); ?>"
 							name="<?php echo esc_attr( $name ); ?>"
 							<?php $this->link(); ?>
@@ -581,10 +583,10 @@ class WP_Customize_Control {
 				<?php endif; ?>
 
 				<?php
-				$dropdown_name = '_customize-dropdown-pages-' . $this->id;
-				$show_option_none = __( '&mdash; Select &mdash;' );
+				$dropdown_name     = '_customize-dropdown-pages-' . $this->id;
+				$show_option_none  = __( '&mdash; Select &mdash;' );
 				$option_none_value = '0';
-				$dropdown = wp_dropdown_pages(
+				$dropdown          = wp_dropdown_pages(
 					array(
 						'name'              => $dropdown_name,
 						'echo'              => 0,
@@ -594,7 +596,7 @@ class WP_Customize_Control {
 					)
 				);
 				if ( empty( $dropdown ) ) {
-					$dropdown = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $dropdown_name ) );
+					$dropdown  = sprintf( '<select id="%1$s" name="%1$s">', esc_attr( $dropdown_name ) );
 					$dropdown .= sprintf( '<option value="%1$s">%2$s</option>', esc_attr( $option_none_value ), esc_html( $show_option_none ) );
 					$dropdown .= '</select>';
 				}
@@ -648,7 +650,9 @@ class WP_Customize_Control {
 					type="<?php echo esc_attr( $this->type ); ?>"
 					<?php echo $describedby_attr; ?>
 					<?php $this->input_attrs(); ?>
-					value="<?php echo esc_attr( $this->value() ); ?>"
+					<?php if ( ! isset( $this->input_attrs['value'] ) ) : ?>
+						value="<?php echo esc_attr( $this->value() ); ?>"
+					<?php endif; ?>
 					<?php $this->link(); ?>
 					/>
 				<?php
@@ -766,18 +770,24 @@ require_once( ABSPATH . WPINC . '/customize/class-wp-customize-nav-menu-location
 
 /**
  * WP_Customize_Nav_Menu_Name_Control class.
+ *
+ * As this file is deprecated, it will trigger a deprecation notice if instantiated. In a subsequent
+ * release, the require_once() here will be removed and _deprecated_file() will be called if file is
+ * required at all.
+ *
+ * @deprecated 4.9.0 This file is no longer used due to new menu creation UX.
  */
 require_once( ABSPATH . WPINC . '/customize/class-wp-customize-nav-menu-name-control.php' );
+
+/**
+ * WP_Customize_Nav_Menu_Locations_Control class.
+ */
+require_once( ABSPATH . WPINC . '/customize/class-wp-customize-nav-menu-locations-control.php' );
 
 /**
  * WP_Customize_Nav_Menu_Auto_Add_Control class.
  */
 require_once( ABSPATH . WPINC . '/customize/class-wp-customize-nav-menu-auto-add-control.php' );
-
-/**
- * WP_Customize_New_Menu_Control class.
- */
-require_once( ABSPATH . WPINC . '/customize/class-wp-customize-new-menu-control.php' );
 
 /**
  * WP_Customize_Date_Time_Control class.

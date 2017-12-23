@@ -885,7 +885,11 @@ window.wp = window.wp || {};
 			container = $( notification.template( data ) );
 
 			if ( notification.dismissible ) {
-				container.find( '.notice-dismiss' ).on( 'click', function() {
+				container.find( '.notice-dismiss' ).on( 'click keydown', function( event ) {
+					if ( 'keydown' === event.type && 13 !== event.which ) {
+						return;
+					}
+
 					if ( notification.parent ) {
 						notification.parent.remove( notification.code );
 					} else {
@@ -904,7 +908,7 @@ window.wp = window.wp || {};
 	/**
 	 * Get all customize settings.
 	 *
-	 * @memberOf wp.customize
+	 * @alias wp.customize.get
 	 *
 	 * @return {object}
 	 */
@@ -930,7 +934,8 @@ window.wp = window.wp || {};
 	 *
 	 * @since 4.7.0
 	 * @access public
-	 * @memberOf wp.customize.utils
+	 *
+	 * @alias wp.customize.utils.parseQueryString
 	 *
 	 * @param {string} queryString Query string.
 	 * @returns {object} Parsed query string.

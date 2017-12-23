@@ -8,10 +8,10 @@
 	 * Custom gallery details frame.
 	 *
 	 * @since 4.9.0
-	 * @class GalleryDetailsMediaFrame
-	 * @constructor
+	 * @class    wp.mediaWidgets~GalleryDetailsMediaFrame
+	 * @augments wp.media.view.MediaFrame.Post
 	 */
-	GalleryDetailsMediaFrame = wp.media.view.MediaFrame.Post.extend( {
+	GalleryDetailsMediaFrame = wp.media.view.MediaFrame.Post.extend(/** @lends wp.mediaWidgets~GalleryDetailsMediaFrame.prototype */{
 
 		/**
 		 * Create the default states.
@@ -53,21 +53,13 @@
 	 * See WP_Widget_Gallery::enqueue_admin_scripts() for amending prototype from PHP exports.
 	 *
 	 * @since 4.9.0
-	 * @class GalleryWidgetModel
-	 * @constructor
+	 *
+	 * @class    wp.mediaWidgets.modelConstructors.media_gallery
+	 * @augments wp.mediaWidgets.MediaWidgetModel
 	 */
-	GalleryWidgetModel = component.MediaWidgetModel.extend( {} );
+	GalleryWidgetModel = component.MediaWidgetModel.extend(/** @lends wp.mediaWidgets.modelConstructors.media_gallery.prototype */{} );
 
-	/**
-	 * Gallery widget control.
-	 *
-	 * See WP_Widget_Gallery::enqueue_admin_scripts() for amending prototype from PHP exports.
-	 *
-	 * @since 4.9.0
-	 * @class GalleryWidgetControl
-	 * @constructor
-	 */
-	GalleryWidgetControl = component.MediaWidgetControl.extend( {
+	GalleryWidgetControl = component.MediaWidgetControl.extend(/** @lends wp.mediaWidgets.controlConstructors.media_gallery.prototype */{
 
 		/**
 		 * View events.
@@ -80,7 +72,12 @@
 		} ),
 
 		/**
-		 * Initialize.
+		 * Gallery widget control.
+		 *
+		 * See WP_Widget_Gallery::enqueue_admin_scripts() for amending prototype from PHP exports.
+		 *
+		 * @constructs wp.mediaWidgets.controlConstructors.media_gallery
+		 * @augments   wp.mediaWidgets.MediaWidgetControl
 		 *
 		 * @since 4.9.0
 		 * @param {Object}         options - Options.
@@ -100,6 +97,21 @@
 			control.selectedAttachments.on( 'change', control.renderPreview );
 			control.selectedAttachments.on( 'reset', control.renderPreview );
 			control.updateSelectedAttachments();
+
+			/*
+			 * Refresh a Gallery widget partial when the user modifies one of the selected attachments.
+			 * This ensures that when an attachment's caption is updated in the media modal the Gallery
+			 * widget in the preview will then be refreshed to show the change. Normally doing this
+			 * would not be necessary because all of the state should be contained inside the changeset,
+			 * as everything done in the Customizer should not make a change to the site unless the
+			 * changeset itself is published. Attachments are a current exception to this rule.
+			 * For a proposal to include attachments in the customized state, see #37887.
+			 */
+			if ( wp.customize && wp.customize.previewer ) {
+				control.selectedAttachments.on( 'change', function() {
+					wp.customize.previewer.send( 'refresh-widget-partial', control.model.get( 'widget_id' ) );
+				} );
+			}
 		},
 
 		/**
@@ -186,7 +198,7 @@
 			});
 
 			mediaFrameProps = control.mapModelToMediaFrameProps( control.model.toJSON() );
-			selection.gallery = new Backbone.Model( _.pick( mediaFrameProps, 'columns', 'link', 'size', '_orderbyRandom' ) );
+			selection.gallery = new Backbone.Model( mediaFrameProps );
 			if ( mediaFrameProps.size ) {
 				control.displaySettings.set( 'size', mediaFrameProps.size );
 			}
