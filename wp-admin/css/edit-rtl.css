@@ -214,7 +214,7 @@ ul.category-tabs li,
 
 /* Back-compat for pre-4.4 */
 #category-adder h4 {
-    margin: 0;
+	margin: 0;
 }
 
 .taxonomy-add-new {
@@ -330,7 +330,7 @@ form#tags-filter {
 }
 
 #content-resize-handle {
-	background: transparent url(../images/resize.gif) no-repeat scroll right bottom;
+	background: transparent url(../images/resize.gif) no-repeat scroll left bottom;
 	width: 12px;
 	cursor: row-resize;
 }
@@ -1122,7 +1122,7 @@ p.popular-tags a {
 }
 
 .comment-ays .comment-content a[href]:after {
-	content: '(' attr( href ) ')';
+	content: "(" attr( href ) ")";
 	display: inline-block;
 	padding: 0 4px;
 	color: #72777C;
@@ -1135,7 +1135,7 @@ p.popular-tags a {
 }
 
 .comment-ays .comment-content p.edit-comment a[href]:after {
-	content: '';
+	content: "";
 	padding: 0;
 }
 
@@ -1299,7 +1299,7 @@ table.links-table {
   (min-resolution: 120dpi) {
 	#content-resize-handle,
 	#post-body .wp_themeSkin .mceStatusbar a.mceResize {
-		background: transparent url(../images/resize-2x.gif) no-repeat scroll right bottom;
+		background: transparent url(../images/resize-2x.gif) no-repeat scroll left bottom;
 		background-size: 11px 11px;
 	}
 
